@@ -1,103 +1,104 @@
-# Chat Saver
+# Chat Saver 🗂️
 
-Save AI chat conversations as structured markdown documents.
+把跟 AI 的聊天对话保存为结构化的 markdown 文档。
 
-## Why
+## 为什么需要它
 
-Conversations with AI often contain valuable analysis, decisions, and code solutions — but they disappear when the session ends. Chat Saver preserves the full conversation: a summary at the top for quick scanning, followed by the verbatim dialogue for detailed review.
+和 AI 的对话里经常有有价值的分析、决策、代码方案，但对话一关就没了。Chat Saver 把对话完整保存下来——顶部有摘要方便快速了解内容，下方是原汁原味的对话记录，方便日后反复查阅和回顾。
 
-## Features
+## 功能特性
 
-- **Full preservation**: keeps the user's words and AI's responses verbatim — no condensing, no omitting
-- **Auto summary**: generates a topic summary and key points for quick scanning
-- **Smart trigger**: only executes when the user explicitly asks to save — no interference with normal conversation
-- **Structured storage**: saves to a project `chats/` directory with date and topic in the filename
-- **Multi-language**: outputs documents in the same language as the conversation
+- **完整保存**：原样保留用户和 AI 的对话内容，不做精炼、不做省略
+- **自动摘要**：生成主题摘要和关键要点，方便快速判断是否需要展开全文
+- **智能触发**：只在用户明确要求保存时才执行，不会干扰日常对话
+- **结构化存储**：统一保存到项目 `chats/` 目录下，文件名包含日期和主题
+- **多语言支持**：中文对话输出中文文档，英文对话输出英文文档
 
-## Installation
+## 安装
 
-> **Works with 55+ AI coding agents** — Claude Code, Codex, Cursor, OpenCode, Windsurf, and more.
+> **兼容 55+ 种 AI 编程工具** — Claude Code、Codex、Cursor、OpenCode、Windsurf 等。
 
-### Option 1: via skills CLI (recommended)
+### 方式一：skills CLI（推荐）
 
-Install [vercel-labs/skills](https://github.com/vercel-labs/skills) once, then:
+安装 [vercel-labs/skills](https://github.com/vercel-labs/skills)，然后一行命令搞定：
 
 ```bash
-# Project-level (available in this project only)
+# 项目级（仅当前项目可用）
 npx skills add ethanhome/chat-saver
 
-# Global (available across all projects)
+# 全局（所有项目可用）
 npx skills add ethanhome/chat-saver -g
 ```
 
-This automatically installs to the correct directory for each agent (`.claude/skills/`, `.agents/skills/`, `.windsurf/skills/`, etc.).
+会自动安装到各工具对应的目录（`.claude/skills/`、`.agents/skills/`、`.windsurf/skills/` 等）。
 
-### Option 2: manual clone
+### 方式二：手动克隆
 
 ```bash
 git clone https://github.com/ethanhome/chat-saver.git ~/.claude/skills/chat-saver
 ```
 
-> For other agents, clone to their respective skills directory (e.g., `~/.codex/skills/chat-saver`, `.agents/skills/chat-saver`).
+> 其他工具请克隆到对应目录（如 `~/.codex/skills/chat-saver`、`.agents/skills/chat-saver`）。
 
-## Usage
+## 使用方法
 
-After installation, trigger with natural language in any supported agent:
+安装完成后，在支持的 AI 工具中用自然语言触发：
 
-- "save this conversation"
-- "export chat"
-- "write a record"
-- "archive this discussion"
+- 「保存对话」
+- 「把聊天存下来」
+- 「导出对话」
+- 「写个记录」
+- 「把对话整理成文档存下来」
 
-**Will NOT trigger** when you just want a verbal recap (e.g., "summarize this", "what did we discuss") — those are answered inline.
+**不会触发的情况**：当你只是想口头回顾对话，如「帮我总结一下」「我们聊了什么」——这些会直接在对话中回答，不会创建文件。
 
-## Output example
+## 输出示例
 
-Files are saved to `<project-root>/chats/YYYY-MM-DD-topic.md`:
+保存后的文件存放在 `<项目根目录>/chats/` 目录下，格式为 `YYYY-MM-DD-主题.md`：
 
 ```markdown
-# React Hooks Optimization
+# React Hooks 优化
 
 > 2026-05-30
 
-## Summary
+## 摘要
 
-Discussed performance optimization strategies for React Hooks in large projects, including useMemo and useCallback usage patterns, and how to avoid unnecessary re-renders.
+讨论了 React Hooks 在大型项目中的性能优化策略，包括 useMemo 和 useCallback 的使用场景分析，以及如何避免不必要的重渲染。
 
-## Key Points
+## 关键要点
 
-- useMemo should only be used for expensive computations
-- useCallback only makes sense with memoized components
-- Custom hooks can encapsulate complex state logic
+- useMemo 应该只用于计算成本高的场景
+- useCallback 需要配合 memo 组件才有意义
+- 自定义 Hook 可以封装复杂的状态逻辑
 
 ---
 
-## Conversation
+## 对话
 
-### User
+### 用户
 
-Help me check this code for performance issues...
+帮我看看这段代码有什么性能问题...
 
 ### AI
 
-This code has a few issues...
+这段代码主要有以下几个问题...
 ```
 
-## Filename rules
+## 文件命名规则
 
-| Rule | Example |
-|------|---------|
-| Format | `YYYY-MM-DD-topic.md` |
-| Topic uses English or pinyin | `react-hooks`, `api-design` |
-| Duplicate topics get a sequence number | `2026-05-30-react-hooks-2.md` |
+| 规则 | 示例 |
+|------|------|
+| 格式 | `YYYY-MM-DD-主题.md` |
+| 主题使用英文或拼音 | `react-hooks`、`api-sheji` |
+| 同主题重复时追加序号 | `2026-05-30-react-hooks-2.md` |
 
-## Notes
+## 注意事项
 
-- Conversation content is preserved verbatim — no condensing or rewriting
-- Sensitive information (passwords, keys, tokens) is not saved
-- Code snippets use appropriate syntax highlighting
-- Multi-topic conversations are grouped by topic with H2 headings
+- 对话内容原样保留，不做任何精炼或改写
+- 不会保存包含敏感信息（密码、密钥、token）的内容
+- 代码片段自动使用对应的语法高亮
+- 如果对话涉及多个不相关话题，会按话题分组
 
-## License
+## 许可证
 
 MIT
