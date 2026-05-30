@@ -1,116 +1,116 @@
 ---
 name: chat-saver
-description: 把跟AI的聊天对话保存为markdown文档。当用户明确要求将对话保存、导出、存档、写文件时触发，如「保存对话」「记录这次聊天」「把聊天存下来」「存一下这次对话」「导出对话」「写个记录」「把对话整理成文档存下来」。不要在用户只是口头总结或回顾时触发——「帮我总结一下」「我们聊了什么」「刚才讨论了啥」这类请求只需要口头回答，不需要保存文件。只有当用户表达了「持久化」「保存为文件」「存档」的意图时才激活。
+description: Save AI chat conversations as structured markdown documents. Triggers when the user explicitly asks to save, export, archive, or write the conversation to a file (e.g., "save this conversation", "export chat", "write a record"). Does NOT trigger when the user just wants a verbal summary ("summarize this", "what did we discuss") — those are answered inline.
 ---
 
-# Chat Saver — 聊天记录保存
+# Chat Saver
 
-把当前会话中的问答内容保存为结构化的 markdown 文档，保存到项目的 `chats/` 目录下。
+Save the current conversation as a structured markdown document to the project's `chats/` directory.
 
-## 为什么需要这个 skill
+## Why
 
-和 AI 的对话里经常有有价值的分析、决策、代码方案，但对话一关就没了。这个 skill 把对话完整保存下来——顶部有摘要方便快速了解内容，下方是原汁原味的对话记录，方便日后反复查阅和回顾。
+Conversations with AI often contain valuable analysis, decisions, and code solutions — but they disappear when the session ends. This skill preserves the full conversation: a summary at the top for quick scanning, followed by the verbatim dialogue for detailed review.
 
-## 什么时候保存
+## When to save
 
-当用户**明确要求将对话保存为文件**时执行。关键词包括：保存、存档、导出、写成文档、记录下来。
+Execute when the user **explicitly asks to save the conversation to a file**. Keywords include: save, archive, export, write to document, record.
 
-**不要触发的情况**：用户只是想口头回顾或总结对话内容，如「帮我总结一下」「我们聊了什么」。这些情况直接在对话中回答即可，不要创建文件。只有当用户表达了「持久化到文件」的意图时才触发。
+**Do NOT trigger when**: the user only wants a verbal summary or review, e.g., "summarize this", "what did we discuss". Answer inline in those cases. Only create a file when the user expresses intent to persist to a file.
 
-## 保存流程
+## Process
 
-### 1. 收集对话内容
+### 1. Collect conversation content
 
-回顾当前会话的完整上下文，逐轮提取用户和AI的对话。收集原则：
-- **原样保留**：用户说的话和AI回的话尽量保持原文，不要精炼、不要省略、不要改写
-- 工具调用（如读文件、执行命令等）的细节不需要保留，但工具调用产生的**有价值结果**（如代码片段、配置内容、关键发现）应作为AI回答的一部分保留
-- 用户的简短确认（如「好的」「对」）也需要保留，它们是对话的节奏标记
+Review the full context of the current session and extract the conversation turn by turn. Collection rules:
+- **Preserve verbatim**: keep the user's words and the AI's responses as close to the original as possible — do not condense, omit, or rewrite
+- Tool call details (e.g., reading a file, running a command) do not need to be preserved, but **valuable results** from tool calls (code snippets, config content, key findings) should be kept as part of the AI's response
+- Brief user confirmations (e.g., "OK", "right", "好的", "对") should also be preserved — they mark the rhythm of the conversation
 
-### 2. 生成主题摘要
+### 2. Generate topic summary
 
-根据对话内容总结：
-- **主题**：本次对话讨论的核心话题（1-5个词，用于文件名）
-- **摘要**：2-5句话概括对话的主要内容和结论
-- **关键要点**：3-7个 bullet point，列出最重要的发现、决策或结论
+Summarize based on the conversation:
+- **Topic**: the core subject of this conversation (1-5 words, used as filename)
+- **Summary**: 2-5 sentences covering the main content and conclusions
+- **Key Points**: 3-7 bullet points listing the most important findings, decisions, or conclusions
 
-### 3. 组织对话内容
+### 3. Organize conversation content
 
-逐轮原样记录对话，使用以下格式：
+Record the conversation turn by turn, verbatim, using this format:
 
 ```markdown
-### 用户
+### User
 
-{用户的原始发言，原样保留}
+{user's original words, preserved verbatim}
 
 ### AI
 
-{AI的原始回答，原样保留}
+{AI's original response, preserved verbatim}
 ```
 
-对话部分的核心原则是**忠实还原**——用户和AI说了什么就记什么，不做精炼、不做省略。这是这份文档最核心的价值：日后翻看时能完整回溯当时的讨论过程，而不是只看到结论。
+The core principle of the conversation section is **faithful reproduction** — write exactly what the user and AI said, no condensing, no omitting. This is the most essential value of the document: enabling a full retrospective of the discussion process later, not just the conclusions.
 
-### 4. 生成文件名
+### 4. Generate filename
 
-格式：`YYYY-MM-DD-主题.md`
+Format: `YYYY-MM-DD-topic.md`
 
-- 日期使用当天日期
-- 主题使用英文或拼音，短横线分隔，如 `react-hooks`、`api-sheji`
-- 如果同一主题已有文件，追加序号，如 `2026-05-30-react-hooks-2.md`
+- Use today's date
+- Topic uses English words or pinyin, separated by hyphens, e.g., `react-hooks`, `api-design`
+- If a file with the same topic already exists, append a number, e.g., `2026-05-30-react-hooks-2.md`
 
-### 5. 保存文件
+### 5. Save the file
 
-将文件保存到项目根目录下的 `chats/` 目录（如果不存在则创建）。
+Save to the `chats/` directory under the project root (create it if it doesn't exist).
 
-完整文件路径：`<项目根目录>/chats/YYYY-MM-DD-主题.md`
+Full path: `<project-root>/chats/YYYY-MM-DD-topic.md`
 
-## 文档模板
+## Document template
 
-严格使用以下模板：
+Use the following template strictly:
 
 ```markdown
-# {主题}
+# {Topic}
 
-> {保存日期}
+> {Save date}
 
-## 摘要
+## Summary
 
-{2-5句话概括对话的主要内容和结论}
+{2-5 sentences summarizing the main content and conclusions}
 
-## 关键要点
+## Key Points
 
-- {要点1}
-- {要点2}
-- {要点3}
+- {Point 1}
+- {Point 2}
+- {Point 3}
 
 ---
 
-## 对话
+## Conversation
 
-### 用户
+### User
 
-{用户的原始发言，原样保留，一个字都不改}
-
-### AI
-
-{AI的原始回答，原样保留，一个字都不改}
-
-### 用户
-
-{下一轮用户发言}
+{User's original words, preserved verbatim}
 
 ### AI
 
-{下一轮AI回答}
+{AI's original response, preserved verbatim}
 
-（逐轮交替，原样记录...）
+### User
+
+{Next turn from user}
+
+### AI
+
+{Next turn from AI}
+
+(Continue alternating turns, verbatim...)
 ```
 
-## 注意事项
+## Notes
 
-- **对话部分的原样保留是最重要的原则**。用户说了什么就写什么，AI回答了什么就记什么。不要精炼、不要省略、不要改写
-- 摘要和关键要点部分是辅助索引，帮助日后快速判断是否需要展开对话部分——这两部分需要提炼
-- 代码片段使用对应的语法高亮（```python、```javascript 等）
-- 如果对话涉及多个不相关话题，按话题分组，用二级标题分隔
-- 不要保存包含敏感信息（密码、密钥、token）的内容
-- 中文对话就输出中文文档，英文对话就输出英文文档
-- 保存完成后，告诉用户文件的完整路径
+- **Preserving the conversation verbatim is the most important principle**. Write exactly what the user and AI said — do not condense, omit, or rewrite
+- The summary and key points sections serve as an auxiliary index, helping quickly determine whether to expand the conversation section later — these parts should be concise and distilled
+- Use appropriate syntax highlighting for code snippets (```python, ```javascript, etc.)
+- If the conversation covers multiple unrelated topics, group by topic using H2 headings
+- Do not save content containing sensitive information (passwords, keys, tokens)
+- Use the same language as the conversation (Chinese conversation → Chinese document, English → English)
+- After saving, tell the user the full file path
